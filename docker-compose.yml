@@ -1,0 +1,28 @@
+# docker-compose.yml
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=helpdesk_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+
+  web:
+    build: ./app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/app  # Hot-reload: altera o código e reflete na hora
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=helpdesk_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_HOST=db
+
+volumes:
+  postgres_data:
